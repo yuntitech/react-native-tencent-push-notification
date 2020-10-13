@@ -8,11 +8,11 @@
 #import <React/RCTEventEmitter.h>
 #import <React/RCTBridgeModule.h>
 
-//#import "XGPush.h"
+#import "XGPush.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RNTencentPushModule : RCTEventEmitter <RCTBridgeModule>
+@interface RNTencentPushModule : RCTEventEmitter <RCTBridgeModule, XGPushDelegate, XGPushTokenManagerDelegate>
 
 + (void)didFinishLaunchingWithOptions:(NSDictionary *)launchOptions;
 

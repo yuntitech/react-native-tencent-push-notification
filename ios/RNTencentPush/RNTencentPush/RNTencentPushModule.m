@@ -90,6 +90,116 @@ static NSMutableDictionary* TencentPush_GetNotification(NSDictionary *userInfo) 
   completionHandler(UIBackgroundFetchResultNewData);
 }
 
+#pragma mark - 信鸽 XGPushDelegate 代理
+#pragma mark - 推送消息回调代理
+// iOS 10 新增 API
+// iOS 10 会走新 API, iOS 10 以前会走到老 API
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_10_0
+
+// App 用户点击通知
+// App 用户选择通知中的行为
+// App 用户在通知中心清除消息
+// 无论本地推送还是远程推送都会走这个回调
+- (void)xgPushUserNotificationCenter:(UNUserNotificationCenter *)center
+      didReceiveNotificationResponse:(UNNotificationResponse *)response
+               withCompletionHandler:(void (^)(void))completionHandler __IOS_AVAILABLE(10.0) {
+  
+  UNNotification *notification = response.notification;
+  NSDictionary *userInfo = notification.request.content.userInfo;
+
+  NSMutableDictionary *dict = TencentPush_GetNotification(userInfo);
+  dict[@"clicked"] = @YES;
+  [self sendEventWithName:TencentPushEvent_Notification body:dict];
+  
+  completionHandler();
+}
+
+// App 在前台弹通知需要调用这个接口, 不使用这个方法, 前台收到消息不会进行弹窗
+- (void)xgPushUserNotificationCenter:(UNUserNotificationCenter *)center
+             willPresentNotification:(UNNotification *)notification
+               withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler __IOS_AVAILABLE(10.0) {
+  
+  NSDictionary *userInfo = notification.request.content.userInfo;
+  
+  NSMutableDictionary *dict = TencentPush_GetNotification(userInfo);
+  dict[@"presented"] = @YES;
+  [self sendEventWithName:TencentPushEvent_Notification body:dict];
+  
+  completionHandler(UNNotificationPresentationOptionBadge | UNNotificationPresentationOptionSound | UNNotificationPresentationOptionAlert);
+}
+
+#endif
+#pragma mark - 各种事件回调
+// 信鸽服务停止的回调
+- (void)xgPushDidFinishStop:(BOOL)isSuccess error:(nullable NSError *)error {
+  [self sendEventWithName:TencentPushEvent_Stop body:@{
+    @"error": @(isSuccess ? 0 : error ? error.code : 0)
+  }];
+}
+
+// 启动信鸽服务成功后，会触发此回调
+- (void)xgPushDidRegisteredDeviceToken:(nullable NSString *)deviceToken error:(nullable NSError *)error{
+  NSString *token = deviceToken ?: @"";
+  [self sendEventWithName:TencentPushEvent_Resgiter body:@{
+    @"deviceToken": token,
+    @"error": @(token.length > 0 ? 0 : error ? error.code : 0)
+  }];
+}
+
+// 绑定帐号的回调
+- (void)xgPushDidAppendAccounts:(nonnull NSArray<NSDictionary *> *)accounts error:(nullable NSError *)error
+{
+    [self sendEventWithName:TencentPushEvent_BindAccount body:@{
+      @"error": @(error ? error.code : 0)
+    }];
+}
+
+// 绑定标签的回调
+- (void)xgPushDidAppendTags:(nonnull NSArray<NSString *> *)tags error:(nullable NSError *)error
+{
+    [self sendEventWithName:TencentPushEvent_BindTags body:@{
+      @"error": @(error ? error.code : 0)
+    }];
+}
+
+// 解除绑定帐号的回调
+- (void)xgPushDidDelAccounts:(nonnull NSArray<NSDictionary *> *)accounts error:(nullable NSError *)error
+{
+    [self sendEventWithName:TencentPushEvent_UnbindAccount body:@{
+      @"error": @(error ? error.code : 0)
+    }];
+}
+
+// 解除绑定标签的回调
+- (void)xgPushDidDelTags:(nonnull NSArray<NSString *> *)tags error:(nullable NSError *)error
+{
+    [self sendEventWithName:TencentPushEvent_UnbindTags body:@{
+      @"error": @(error ? error.code : 0)
+    }];
+}
+
+- (void)didReceiveRemoteNotification:(NSNotification *)notification {
+    NSDictionary *userInfo = notification.object;
+    NSDictionary *aps = userInfo[@"aps"];
+    
+    int contentAvailable = 0;
+    if ([aps objectForKey:@"content-available"]) {
+      contentAvailable = [[NSString stringWithFormat:@"%@", aps[@"content-available"]] intValue];
+    }
+    
+    if (contentAvailable == 1) {
+      // 静默消息
+      // 静默推送可以让 App在后台不启动应用时就能运行一段代码, 从服务器拉取消息, 执行didReceiveRemoteNotification:fetchCompletionHandler
+      [self sendEventWithName:TencentPushEvent_Message body:TencentPush_GetCustomContent(userInfo)];
+    }
+    else {
+      // 推送消息
+      NSMutableDictionary *dict = TencentPush_GetNotification(userInfo);
+      dict[@"presented"] = @YES;
+      [self sendEventWithName:TencentPushEvent_Notification body:dict];
+    }
+}
+
 #pragma mark - RN 方法
 
 RCT_EXPORT_MODULE(RNTencentPush);
@@ -137,8 +247,62 @@ RCT_EXPORT_MODULE(RNTencentPush);
 }
 
 #pragma mark - 启动TPNS推送服务
-//RCT_EXPORT_METHOD(start:(NSInteger)appID appKey:(NSString *)appKey) {
-//
-//}
+RCT_EXPORT_METHOD(start:(NSInteger)accessID appKey:(NSString *)appKey) {
+    [[XGPush defaultManager] startXGWithAccessID:(int)accessID accessKey:appKey delegate:self];
+    [XGPushTokenManager defaultTokenManager].delegate = self;
+    if (RNTencentPush_LaunchUserInfo != nil) {
+      NSMutableDictionary *dict = TencentPush_GetNotification(RNTencentPush_LaunchUserInfo);
+      dict[@"clicked"] = @YES;
+      [self sendEventWithName:TencentPushEvent_Notification body:dict];
+        RNTencentPush_LaunchUserInfo = nil;
+    }
+}
+
+#pragma mark - 停止TPNS推送服务
+RCT_EXPORT_METHOD(stop) {
+  [[XGPush defaultManager] stopXGNotification];
+}
+
+#pragma mark - 绑定账号
+RCT_EXPORT_METHOD(bindAccount:(NSString *)account) {
+    [[XGPushTokenManager defaultTokenManager] appendAccounts:@[@{@"accountType":@(XGPushTokenBindTypeAccount),@"account":account}]];
+}
+
+#pragma mark - 解绑账号
+RCT_EXPORT_METHOD(unbindAccount:(NSString *)account) {
+    [[XGPushTokenManager defaultTokenManager] delAccounts:@[@{@"accountType":@(XGPushTokenBindTypeAccount),@"account":account}]];
+}
+
+#pragma mark - 绑定标签
+RCT_EXPORT_METHOD(bindTags:(nonnull NSArray<NSString *> *)tags) {
+    [[XGPushTokenManager defaultTokenManager] appendTags:tags];
+}
+
+#pragma mark - 解绑标签
+RCT_EXPORT_METHOD(unbindTags:(nonnull NSArray<NSString *> *)tags) {
+    [[XGPushTokenManager defaultTokenManager] delTags:tags];
+}
+
+#pragma mark - 设置角标
+RCT_EXPORT_METHOD(setBadge:(NSInteger)badge) {
+  // 这里本地角标
+  [[XGPush defaultManager] setXgApplicationBadgeNumber:badge];
+  // 上报服务器，方便实现 +1 操作
+  [[XGPush defaultManager] setBadge:badge];
+}
+
+#pragma mark - 获取角标
+RCT_EXPORT_METHOD(getBadge:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject) {
+  NSInteger badge = [[XGPush defaultManager] xgApplicationBadgeNumber];
+  resolve(@{
+    @"badge": @(badge)
+  });
+}
+
+#pragma mark - 这个开关表明是否打印TPNS SDK的日志信息
+RCT_EXPORT_METHOD(setDebug:(BOOL)enable) {
+  [[XGPush defaultManager] setEnableDebug:enable];
+}
 
 @end
