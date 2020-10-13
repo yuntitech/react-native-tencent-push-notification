@@ -2,9 +2,10 @@
   "name": "react-native-tencent-push-notification",
   "version": "1.0.0",
   "description": "react native tencent cloud push notification",
-  "main": "index.js",
+  "main": "./dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rm -rf dist && npx tsc"
   },
   "repository": {
     "type": "git",
