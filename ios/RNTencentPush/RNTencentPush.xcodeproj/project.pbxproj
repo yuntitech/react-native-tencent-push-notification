@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2DF57398253554940075A41D /* RNTTencentPushModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DF57397253554940075A41D /* RNTTencentPushModule.m */; };
+		2D9AB45C25357BAE0049E0E7 /* RNTencentPushModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D9AB45A25357BAE0049E0E7 /* RNTencentPushModule.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -23,9 +23,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2D9AB45A25357BAE0049E0E7 /* RNTencentPushModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNTencentPushModule.m; sourceTree = "<group>"; };
+		2D9AB45B25357BAE0049E0E7 /* RNTencentPushModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNTencentPushModule.h; sourceTree = "<group>"; };
 		2DF57388253554360075A41D /* libRNTencentPush.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRNTencentPush.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		2DF57396253554940075A41D /* RNTTencentPushModule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RNTTencentPushModule.h; sourceTree = "<group>"; };
-		2DF57397253554940075A41D /* RNTTencentPushModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RNTTencentPushModule.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,8 +58,8 @@
 		2DF5738A253554360075A41D /* RNTencentPush */ = {
 			isa = PBXGroup;
 			children = (
-				2DF57396253554940075A41D /* RNTTencentPushModule.h */,
-				2DF57397253554940075A41D /* RNTTencentPushModule.m */,
+				2D9AB45B25357BAE0049E0E7 /* RNTencentPushModule.h */,
+				2D9AB45A25357BAE0049E0E7 /* RNTencentPushModule.m */,
 			);
 			path = RNTencentPush;
 			sourceTree = "<group>";
@@ -120,7 +120,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2DF57398253554940075A41D /* RNTTencentPushModule.m in Sources */,
+				2D9AB45C25357BAE0049E0E7 /* RNTencentPushModule.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

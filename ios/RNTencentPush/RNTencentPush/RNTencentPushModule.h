@@ -1,10 +1,3 @@
-/*
- * @Author: leejunhui
- * @Date: 2020-10-13 11:20:52
- * @LastEditTime: 2020-10-13 14:00:41
- * @LastEditors: leejunhui
- * @Description: 
- */
 //
 //  RNTencentPushModule.h
 //  RNTencentPush

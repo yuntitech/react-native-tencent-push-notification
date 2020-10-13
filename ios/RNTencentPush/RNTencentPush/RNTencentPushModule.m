@@ -5,8 +5,8 @@
 //  Created by leejunhui on 2020/10/13.
 //
 
-#import "RNTTencentPushModule.h"
+#import "RNTencentPushModule.h"
 
-@implementation RNTTencentPushModule
+@implementation RNTencentPushModule
 
 @end
