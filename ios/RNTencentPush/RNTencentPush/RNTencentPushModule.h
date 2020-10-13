@@ -8,9 +8,15 @@
 #import <React/RCTEventEmitter.h>
 #import <React/RCTBridgeModule.h>
 
+//#import "XGPush.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RNTencentPushModule : RCTEventEmitter
+@interface RNTencentPushModule : RCTEventEmitter <RCTBridgeModule>
+
++ (void)didFinishLaunchingWithOptions:(NSDictionary *)launchOptions;
+
++ (void)didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler;
 
 @end
 
