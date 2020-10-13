@@ -1,5 +1,5 @@
 //
-//  RNTTencentPushModule.m
+//  RNTencentPushModule.m
 //  RNTencentPush
 //
 //  Created by leejunhui on 2020/10/13.
