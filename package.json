@@ -1,0 +1,20 @@
+{
+  "name": "react-native-tencent-push-notification",
+  "version": "1.0.0",
+  "description": "react native tencent cloud push notification",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yuntitech/react-native-tencent-push-notification.git"
+  },
+  "author": "YunTiTech",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/react-native": "^0.61.14",
+    "react-native": "^0.61.5",
+    "typescript": "^3.7.5"
+  }
+}
