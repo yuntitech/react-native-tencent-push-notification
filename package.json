@@ -13,6 +13,7 @@
   },
   "author": "YunTiTech",
   "license": "MIT",
+  "homepage": "https://github.com/musicode/react-native-tencent-push-notification#readme",
   "devDependencies": {
     "@types/react-native": "^0.61.14",
     "react-native": "^0.61.5",
