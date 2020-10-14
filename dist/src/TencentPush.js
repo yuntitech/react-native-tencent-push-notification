@@ -4,7 +4,7 @@ exports.TencentCloudPush = void 0;
 /*
  * @Author: leejunhui
  * @Date: 2020-10-13 11:40:03
- * @LastEditTime: 2020-10-13 16:06:09
+ * @LastEditTime: 2020-10-14 11:48:15
  * @LastEditors: leejunhui
  * @Description:
  */
@@ -34,6 +34,18 @@ class TencentCloudPush {
         };
         this.nativeEventsRegistry = new NativeEventsRegistry_1.NativeEventsRegistry();
         this.nativeRetryHandler();
+    }
+    /**
+     * 配置 TPNS 集群域名
+     * @param domainName 域名
+     */
+    // TODO: leejunhui 安卓端需要实现 configureClusterDomainName 原生方法
+    configureClusterDomainName(domainName) {
+        if (react_native_1.Platform.OS === 'android') {
+        }
+        else if (react_native_1.Platform.OS === 'ios') {
+            RNTencentPush.configureClusterDomainName(domainName);
+        }
     }
     /**
      * 设置是否开启调试模式，底层 SDK 会打印详细信息

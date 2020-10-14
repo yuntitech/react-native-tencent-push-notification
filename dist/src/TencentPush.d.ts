@@ -5,6 +5,11 @@ export declare class TencentCloudPush {
     private retryLeftMap;
     constructor();
     /**
+     * 配置 TPNS 集群域名
+     * @param domainName 域名
+     */
+    configureClusterDomainName(domainName: string): void;
+    /**
      * 设置是否开启调试模式，底层 SDK 会打印详细信息
      *
      * @param {boolean} enable
