@@ -7,7 +7,7 @@
 
 #import "RNTencentPushModule.h"
 #import <React/RCTUtils.h>
-
+#import "XGPushPrivate.h"
 static NSString *TencentPushEvent_Start = @"start";
 static NSString *TencentPushEvent_Stop = @"stop";
 static NSString *TencentPushEvent_Resgiter = @"register";
@@ -146,6 +146,14 @@ static NSMutableDictionary* TencentPush_GetNotification(NSDictionary *userInfo) 
   }];
 }
 
+// 启动信鸽服务失败后，会触发此回调
+- (void)xgPushDidFailToRegisterDeviceTokenWithError:(nullable NSError *)error
+{
+    [self sendEventWithName:TencentPushEvent_RegisterFail body:@{
+      @"error": @(error ? error.code : 0)
+    }];
+}
+
 // 绑定帐号的回调
 - (void)xgPushDidAppendAccounts:(nonnull NSArray<NSDictionary *> *)accounts error:(nullable NSError *)error
 {
@@ -246,6 +254,12 @@ RCT_EXPORT_MODULE(RNTencentPush);
   ];
 }
 
+#pragma mark - 配置TPNS集群域名
+RCT_EXPORT_METHOD(configureClusterDomainName:(NSString *)domainName) {
+    /// @note TPNS SDK1.2.7.1+
+    [[XGPush defaultManager] configureClusterDomainName:domainName];
+}
+
 #pragma mark - 启动TPNS推送服务
 RCT_EXPORT_METHOD(start:(NSInteger)accessID appKey:(NSString *)appKey) {
     [[XGPush defaultManager] startXGWithAccessID:(int)accessID accessKey:appKey delegate:self];
@@ -304,5 +318,7 @@ RCT_EXPORT_METHOD(getBadge:(RCTPromiseResolveBlock)resolve
 RCT_EXPORT_METHOD(setDebug:(BOOL)enable) {
   [[XGPush defaultManager] setEnableDebug:enable];
 }
+
+
 
 @end

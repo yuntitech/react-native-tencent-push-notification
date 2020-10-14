@@ -1,7 +1,7 @@
 /*
  * @Author: leejunhui
  * @Date: 2020-10-13 11:40:03
- * @LastEditTime: 2020-10-13 16:06:09
+ * @LastEditTime: 2020-10-14 11:48:15
  * @LastEditors: leejunhui
  * @Description: 
  */
@@ -19,6 +19,19 @@ export class TencentCloudPush {
     constructor() {
         this.nativeEventsRegistry = new NativeEventsRegistry();
         this.nativeRetryHandler();
+    }
+
+    /**
+     * 配置 TPNS 集群域名
+     * @param domainName 域名
+     */
+    // TODO: leejunhui 安卓端需要实现 configureClusterDomainName 原生方法
+    public configureClusterDomainName(domainName: string) {
+        if (Platform.OS === 'android') {
+
+        } else if (Platform.OS === 'ios') {
+            RNTencentPush.configureClusterDomainName(domainName);
+        }
     }
 
     /**
