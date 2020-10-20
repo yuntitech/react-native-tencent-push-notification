@@ -1,0 +1,13 @@
+{
+    "tpns": {
+        "access_id": "1580001463",
+        "access_key": "AGS287MO8OJC"
+    },
+    "com.yunti.ifs": {
+        "channel": {
+            "enable": true
+        }
+    },
+    "debug": false,
+    "version": "1.2.1.1"
+}
