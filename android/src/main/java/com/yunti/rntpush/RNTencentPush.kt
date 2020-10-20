@@ -25,7 +25,7 @@ import org.json.JSONObject
  *   Create by cyberlouis on 2020/10/20
  */
 
-class RNTXingePushModule(private val reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext),
+class RNTencentPush(private val reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext),
     ActivityEventListener, LifecycleEventListener {
 
     companion object {
@@ -45,7 +45,7 @@ class RNTXingePushModule(private val reactContext: ReactApplicationContext) : Re
     }
 
     override fun getName(): String {
-        return "RNTXingePush"
+        return "RNTencentPush"
     }
 
     //这个开关表明是否打印TPNS SDK的日志信息
@@ -331,8 +331,15 @@ class RNTXingePushModule(private val reactContext: ReactApplicationContext) : Re
         }, intentFilter)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-
+    override fun onNewIntent(intent: Intent?) {
+        currentActivity?.let {
+            // 后台运行时点击通知会调用
+            it.intent = intent
+        }
     }
+
+    override fun onActivityResult(activity: Activity?, requestCode: Int, resultCode: Int, data: Intent?) {
+    }
+
 
 }

@@ -3,7 +3,7 @@ package com.yunti.rntpush.receiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import com.yunti.rntpush.RNTXingePushModule
+import com.yunti.rntpush.RNTencentPush
 
 import com.yunti.rntpush.utils.Constant
 import com.tencent.android.tpush.XGPushBaseReceiver
@@ -142,8 +142,8 @@ class MessageReceiver : XGPushBaseReceiver() {
 
         // 在 RNTXingePushModule 还没初始化时，这个方法就会执行
         // 因此为了获取到启动 app 的那条推送，这里需要存一下
-        if (!RNTXingePushModule.isStarted) {
-            RNTXingePushModule.launchIntent = intent
+        if (!RNTencentPush.isStarted) {
+            RNTencentPush.launchIntent = intent
         }
     }
 
