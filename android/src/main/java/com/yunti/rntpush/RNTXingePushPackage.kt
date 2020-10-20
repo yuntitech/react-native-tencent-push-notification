@@ -1,13 +1,14 @@
 package com.yunti.rntpush.xingepush
 
+import com.facebook.react.ReactPackage
+import com.facebook.react.bridge.JavaScriptModule
+import com.facebook.react.bridge.NativeModule
+import com.facebook.react.bridge.ReactApplicationContext
+import com.facebook.react.uimanager.ViewManager
 import com.yunti.rntpush.RNTXingePushModule
 import java.util.Arrays
 
-import com.yunti.rntpush.ReactPackage
-import com.yunti.rntpush.bridge.NativeModule
-import com.yunti.rntpush.bridge.ReactApplicationContext
-import com.yunti.rntpush.uimanager.ViewManager
-import com.yunti.rntpush.bridge.JavaScriptModule
+
 
 class RNTXingePushPackage : ReactPackage {
 
@@ -16,7 +17,7 @@ class RNTXingePushPackage : ReactPackage {
     }
 
     // Deprecated from RN 0.47
-    fun createJSModules(): List<Class<out JavaScriptModule>> {
+    override fun createJSModules(): List<Class<out JavaScriptModule>> {
         return emptyList<Class<out JavaScriptModule>>()
     }
 

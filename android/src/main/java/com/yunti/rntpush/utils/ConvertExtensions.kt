@@ -1,8 +1,9 @@
 package com.yunti.rntpush.utils
 
 import android.content.Intent
-import com.yunti.rntpush.bridge.Arguments
-import com.yunti.rntpush.bridge.WritableMap
+import com.facebook.react.bridge.Arguments
+import com.facebook.react.bridge.WritableMap
+
 import com.tencent.android.tpush.XGPushClickedResult
 import com.tencent.android.tpush.XGPushTextMessage
 import org.json.JSONException

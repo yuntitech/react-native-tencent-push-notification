@@ -6,15 +6,16 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import androidx.collection.ArraySet
-import com.yunti.rntpush.bridge.*
-import com.yunti.rntpush.modules.core.DeviceEventManagerModule
-import com.github.musicode.xingepush.utils.Constant
-import com.github.musicode.xingepush.utils.createClickedNotifiction
-import com.github.musicode.xingepush.utils.fromJson
+import com.facebook.react.bridge.*
+import com.facebook.react.modules.core.DeviceEventManagerModule
 import com.tencent.android.tpush.XGIOperateCallback
 import com.tencent.android.tpush.XGPushBaseReceiver
 import com.tencent.android.tpush.XGPushConfig
 import com.tencent.android.tpush.XGPushManager
+import com.xiaomi.push.it
+import com.yunti.rntpush.utils.Constant
+import com.yunti.rntpush.utils.createClickedNotifiction
+import com.yunti.rntpush.utils.fromJson
 import me.leolin.shortcutbadger.ShortcutBadger
 import org.json.JSONException
 import org.json.JSONObject
@@ -24,7 +25,8 @@ import org.json.JSONObject
  *   Create by cyberlouis on 2020/10/20
  */
 
-class RNTXingePushModule(private val reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext), ActivityEventListener, LifecycleEventListener {
+class RNTXingePushModule(private val reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext),
+    ActivityEventListener, LifecycleEventListener {
 
     companion object {
         var isStarted = false
@@ -283,6 +285,9 @@ class RNTXingePushModule(private val reactContext: ReactApplicationContext) : Re
 
     override fun onHostResume() {
         XGPushManager.onActivityStarted(currentActivity)
+        currentActivity?.intent?.createClickedNotifiction()?.let{
+
+        }
         currentActivity?.intent?.createClickedNotifiction()?.let {
             if (isAppLaunched) {
                 sendEvent("notification", it)
@@ -300,16 +305,8 @@ class RNTXingePushModule(private val reactContext: ReactApplicationContext) : Re
 
     }
 
-    override fun onActivityResult(activity: Activity?, requestCode: Int, resultCode: Int, data: Intent?) {
 
-    }
 
-    override fun onNewIntent(intent: Intent) {
-        currentActivity?.let {
-            // 后台运行时点击通知会调用
-            it.intent = intent
-        }
-    }
 
     private fun registerReceivers() {
 
@@ -332,6 +329,10 @@ class RNTXingePushModule(private val reactContext: ReactApplicationContext) : Re
 
             }
         }, intentFilter)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+
     }
 
 }
