@@ -1,4 +1,4 @@
-package com.yunti.rntpush.xingepush
+package com.yunti.rntpush
 
 import com.facebook.react.ReactPackage
 import com.facebook.react.bridge.NativeModule
