@@ -302,12 +302,12 @@ RCT_EXPORT_METHOD(stop) {
 
 #pragma mark - 绑定账号
 RCT_EXPORT_METHOD(bindAccount:(NSString *)account) {
-    [[XGPushTokenManager defaultTokenManager] appendAccounts:@[@{@"accountType":@(XGPushTokenBindTypeAccount),@"account":account}]];
+    [[XGPushTokenManager defaultTokenManager] appendAccounts:@[@{@"accountType":@(0),@"account":account}]];
 }
 
 #pragma mark - 解绑账号
 RCT_EXPORT_METHOD(unbindAccount:(NSString *)account) {
-    [[XGPushTokenManager defaultTokenManager] delAccounts:@[@{@"accountType":@(XGPushTokenBindTypeAccount),@"account":account}]];
+    [[XGPushTokenManager defaultTokenManager] delAccounts:@[@{@"accountType":@(0),@"account":account}]];
 }
 
 #pragma mark - 绑定标签
