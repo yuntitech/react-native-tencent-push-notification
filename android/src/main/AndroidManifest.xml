@@ -3,7 +3,9 @@
 
     <application>
 
-
+        <meta-data
+            android:name="XG_SERVER_SUFFIX"
+            android:value="tpns.sh.tencent.com" />
         <service
             android:name="com.huawei.android.hms.tpns.HWHmsMessageService"
             android:exported="false">
