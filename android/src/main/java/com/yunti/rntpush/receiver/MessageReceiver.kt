@@ -148,11 +148,9 @@ class MessageReceiver : XGPushBaseReceiver() {
     }
 
     override fun onDeleteAttributeResult(p0: Context?, p1: Int, p2: String?) {
-        TODO("Not yet implemented")
     }
 
     override fun onSetAccountResult(p0: Context?, p1: Int, p2: String?) {
-        TODO("Not yet implemented")
     }
 
     override fun onNotificationShowedResult(context: Context?, result: XGPushShowedResult?) {
