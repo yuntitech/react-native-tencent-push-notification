@@ -8,6 +8,16 @@
 #import "RNTencentPushModule.h"
 #import <React/RCTUtils.h>
 #import "XGPushPrivate.h"
+
+#ifndef TPNS_DISPATCH_MAIN_SYNC_SAFE
+#define TPNS_DISPATCH_MAIN_SYNC_SAFE(block)              \
+    if ([NSThread isMainThread]) {                       \
+        block();                                         \
+    } else {                                             \
+        dispatch_sync(dispatch_get_main_queue(), block); \
+    }
+#endif
+
 static NSString *TencentPushEvent_Start = @"start";
 static NSString *TencentPushEvent_Stop = @"stop";
 static NSString *TencentPushEvent_Resgiter = @"register";
@@ -64,6 +74,8 @@ static NSMutableDictionary* TencentPush_GetNotification(NSDictionary *userInfo) 
 #pragma mark - 开启服务
 // didFinishLaunchingWithOptions return YES 之前调用
 + (void)didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+  // 传递didFinishLaunchingWithOptions的launchOptions，用于推送拉起app"启动数"统计
+  [XGPush defaultManager].launchOptions = [launchOptions mutableCopy];
   // 点击推送启动 App
   if ([launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]) {
     RNTencentPush_LaunchUserInfo = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
@@ -139,6 +151,11 @@ static NSMutableDictionary* TencentPush_GetNotification(NSDictionary *userInfo) 
 
 // 启动信鸽服务成功后，会触发此回调
 - (void)xgPushDidRegisteredDeviceToken:(nullable NSString *)deviceToken error:(nullable NSError *)error{
+    //在注册完成后上报角标数目
+    if (!error) {
+        //重置服务端自动+1基数
+        [[XGPush defaultManager] setBadge:0];
+    }
   NSString *token = deviceToken ?: @"";
   [self sendEventWithName:TencentPushEvent_Resgiter body:@{
     @"deviceToken": token,
@@ -264,6 +281,12 @@ RCT_EXPORT_METHOD(configureClusterDomainName:(NSString *)domainName) {
 RCT_EXPORT_METHOD(start:(NSInteger)accessID appKey:(NSString *)appKey) {
     [[XGPush defaultManager] startXGWithAccessID:(int)accessID accessKey:appKey delegate:self];
     [XGPushTokenManager defaultTokenManager].delegate = self;
+    /// 角标数目清零,通知中心清空
+    if ([XGPush defaultManager].xgApplicationBadgeNumber > 0) {
+        TPNS_DISPATCH_MAIN_SYNC_SAFE(^{
+            [XGPush defaultManager].xgApplicationBadgeNumber = 0;
+        });
+    }
     if (RNTencentPush_LaunchUserInfo != nil) {
       NSMutableDictionary *dict = TencentPush_GetNotification(RNTencentPush_LaunchUserInfo);
       dict[@"clicked"] = @YES;
@@ -279,12 +302,12 @@ RCT_EXPORT_METHOD(stop) {
 
 #pragma mark - 绑定账号
 RCT_EXPORT_METHOD(bindAccount:(NSString *)account) {
-    [[XGPushTokenManager defaultTokenManager] appendAccounts:@[@{@"accountType":@(XGPushTokenBindTypeAccount),@"account":account}]];
+    [[XGPushTokenManager defaultTokenManager] appendAccounts:@[@{@"accountType":@(0),@"account":account}]];
 }
 
 #pragma mark - 解绑账号
 RCT_EXPORT_METHOD(unbindAccount:(NSString *)account) {
-    [[XGPushTokenManager defaultTokenManager] delAccounts:@[@{@"accountType":@(XGPushTokenBindTypeAccount),@"account":account}]];
+    [[XGPushTokenManager defaultTokenManager] delAccounts:@[@{@"accountType":@(0),@"account":account}]];
 }
 
 #pragma mark - 绑定标签
