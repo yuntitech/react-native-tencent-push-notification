@@ -59,7 +59,7 @@ static NSMutableDictionary* TencentPush_GetNotification(NSDictionary *userInfo) 
   NSDictionary *alert = userInfo[@"aps"][@"alert"];
   
   NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
-  dict[@"custom_content"] = customContent;
+  dict[@"custom_content"] = customContent[@"custom"];
   dict[@"body"] = @{
     @"title": alert[@"title"] ?: @"",
     @"subtitle": alert[@"subtitle"] ?: @"",
@@ -133,7 +133,8 @@ static NSMutableDictionary* TencentPush_GetNotification(NSDictionary *userInfo) 
   
   NSDictionary *userInfo = notification.request.content.userInfo;
   
-  NSMutableDictionary *dict = TencentPush_GetNotification(userInfo);
+
+    NSMutableDictionary *dict = TencentPush_GetNotification(userInfo);
   dict[@"presented"] = @YES;
   [self sendEventWithName:TencentPushEvent_Notification body:dict];
   
@@ -228,7 +229,6 @@ static NSMutableDictionary* TencentPush_GetNotification(NSDictionary *userInfo) 
 #pragma mark - RN 方法
 
 RCT_EXPORT_MODULE(RNTencentPush);
-
 + (BOOL)requiresMainQueueSetup {
   return YES;
 }
