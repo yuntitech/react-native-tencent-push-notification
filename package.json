@@ -1,6 +1,6 @@
 {
   "name": "react-native-tencent-push-notification",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "react native tencent cloud push notification",
   "main": "./dist/index.js",
   "scripts": {

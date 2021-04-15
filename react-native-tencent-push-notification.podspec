@@ -16,6 +16,14 @@ Pod::Spec.new do |s|
   s.source_files  = "ios/**/*.{h,m}"
 
   s.dependency 'React'
-  s.dependency 'TPNS-iOS'
+  s.dependency 'TPNS-iOS-Extension','~> 1.3.1.0'
+
+  s.vendored_libraries = 'ios/TPNS-SDK/libXG-SDK-Cloud.a'
+  s.frameworks = 'SystemConfiguration','CoreTelephony','UserNotifications','CoreData','CFNetwork','Foundation','CoreGraphics'
+  s.vendored_frameworks = 'ios/TPNS-SDK/XGMTACloud.framework','ios/TPNS-SDK/InAppMessage/TPNSInAppMessage.framework'
+  s.libraries = 'z','c++',"sqlite3"
+  s.resource = 'ios/TPNS-SDK/InAppMessage/TPNSInAppMessageResource.bundle'
+  s.pod_target_xcconfig = { 'OTHER_LDFLAGS' => '-lObjC' }
+
 
 end
