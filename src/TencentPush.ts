@@ -11,6 +11,58 @@ import {NativeEventsRegistry} from "./registry/NativeEventsRegistry";
 
 const { RNTencentPush } = NativeModules;
 
+export type PushParam = {
+    debug:boolean,
+    accessId: number,
+    accessKey: string
+}
+
+export type TpnsEventListener = {
+    onNotification:(data: Notification) => void
+}
+
+export type AndroidPushChannelParam ={
+    enable:boolean,
+    huawei?:HuaWeiOption,
+    meizu?:MeizuOption,
+    oppo?:OppoOption,
+    miPush?:MiPushOption
+}
+
+export type MiPushOption = {
+    appId?:string
+    appKey?:string
+}
+
+export type HuaWeiOption = {
+    debugMode?:boolean
+}
+
+export type MeizuOption = {
+    appId:string
+    appKey:string
+}
+
+export type OppoOption = {
+    appKey:string;
+    appSecret:string
+}
+
+export type Notification = {
+    tp: number; // 消息类型
+    msg: string; // 消息内容
+    st: string; // 消息发送时间
+    pushId?: number; // 原推送消息
+    type: number; // 消息创建类型（1=手工创建，2=系统创建）
+    sellerId?: string; //  商家ID
+    pushPlanId?: number; // （新增）智能推送ID（消息送达、点击上报埋点）
+    pushRecordId?: number; // （新增）推送记录ID
+    msgGroupScene?: string; // （新增）站内信场景（跳转到某一消息中心）
+    groupId?: string; // （新增）站内信组Id
+    clicked: boolean; // 用户是否已经点击
+    presented: boolean; // 安卓上显示送达
+  }
+
 export class TencentCloudPush {
     private nativeEventsRegistry: NativeEventsRegistry
     private retryParamsMap: Map<string, any> = new Map<string, any>()
@@ -21,15 +73,26 @@ export class TencentCloudPush {
         this.nativeRetryHandler();
     }
 
+    public initTPNS(params:{pushParam:PushParam,eventListener:TpnsEventListener,iosDomainName?:string,androidPushChannelParam?:AndroidPushChannelParam}){
+        const {pushParam,eventListener,iosDomainName,androidPushChannelParam} = params 
+        const { debug, accessId , accessKey } = pushParam
+        RNTencentPush.setDebug(debug);
+        if(Platform.OS === 'ios' && iosDomainName){       
+             this.configureClusterDomainName(iosDomainName)
+        }
+        if(Platform.OS === 'android' && androidPushChannelParam){
+            this.initAndroidPushChannel(androidPushChannelParam)
+        }
+        this.subscribeTPNSEvent(eventListener)
+        this.start(accessId,accessKey)
+    }
+
     /**
-     * 配置 TPNS 集群域名
+     * 配置 TPNS 集群域名 (Android端该配置在configJson中完成)
      * @param domainName 域名
      */
-    // TODO: leejunhui 安卓端需要实现 configureClusterDomainName 原生方法
     public configureClusterDomainName(domainName: string) {
-        if (Platform.OS === 'android') {
-
-        } else if (Platform.OS === 'ios') {
+        if (Platform.OS === 'ios') {
             RNTencentPush.configureClusterDomainName(domainName);
         }
     }
@@ -45,7 +108,6 @@ export class TencentCloudPush {
 
     /**
      * 启动信鸽推送服务，如果是通过点击推送打开的 App，调用 start 后会触发 notification 事件
-     * Android仅设置了配置未调用启动与注册代码
      *
      * @param {number} accessId
      * @param {string} accessKey
@@ -59,15 +121,6 @@ export class TencentCloudPush {
         }
         this.retryParamsMap.set(TencentPushEventName.RegisterFail, {accessId, accessKey})
         RNTencentPush.start(accessId, accessKey);
-    }
-
-    /**
-     * 启动并注册
-     */
-    public registerPush() {
-        if (Platform.OS === 'android') {
-            RNTencentPush.registerPush()
-        }
     }
 
     /**
@@ -143,12 +196,46 @@ export class TencentCloudPush {
 
     /**
      * 监听 腾讯推送事件回调
-     * @param name 通知名
      * @param listener 回调处理函数
      */
-    public addEventListener(name: TencentPushEventName, listener: (data: any) => void) {
-        return this.nativeEventsRegistry.addEventListener(name, listener);
-    }
+
+    public subscribeTPNSEvent = (eventListener:TpnsEventListener) => {
+
+        // iOS: 静默推送会来到这个方法
+        this.nativeEventsRegistry.addEventListener(TencentPushEventName.Message, data => {
+            const notification = this.getNotificationFromData(data)
+            if(notification){
+                eventListener.onNotification(notification);
+            }
+        });
+    
+        // 普通推送
+        this.nativeEventsRegistry.addEventListener(TencentPushEventName.Notification, data => {
+            const notification = this.getNotificationFromData(data)
+            if(notification){
+                eventListener.onNotification(notification);
+            }
+        });
+     };
+
+     private getNotificationFromData = (data:any): Notification | null => {
+        let notification: Notification;
+        try {
+          if (Platform.OS === 'android') {
+            notification = data;
+          } else {
+            const parsedCustomContent = JSON.parse(data.custom_content);
+            notification = parsedCustomContent.bookln_msg;
+          }
+        } catch (error) {
+          console.log('==============wws❌❌❌: ParseNotificationError ', error);
+          return null;
+        }
+    
+        notification.clicked = data.clicked;
+        notification.presented = data.presented;
+        return notification;
+      };
 
     private nativeRetryHandler() {
         this.resetRetryLeftMap()
@@ -190,13 +277,9 @@ export class TencentCloudPush {
         const account = this.retryParamsMap.get(eventType)
         switch (eventType) {
             case TencentPushEventName.RegisterFail:
-                if (Platform.OS === 'android') {
-                    this.registerPush()
-                } else {
                     const accessConfig = this.retryParamsMap.get(eventType)
                     accessConfig != null ? this.start(accessConfig.accessId, accessConfig.accessKey) :
                         this.eventEmitAndReset(eventType, data)
-                }
                 break
             case TencentPushEventName.BindAccountFail:
                 account != null ? this.bindAccount(account) : this.eventEmitAndReset(eventType, data)
@@ -207,64 +290,6 @@ export class TencentCloudPush {
     }
 
     /*************************** Android 独有的配置 **********************************/
-    /**
-     * 设置是否开启第三方推送通道
-     *
-     * @param {boolean} enable
-     */
-    public enableOtherPush(enable: boolean) {
-        if (Platform.OS === 'android') {
-            RNTencentPush.enableOtherPush(enable);
-        }
-    }
-
-
-    /**
-     * 设置是否开启华为推送的调试模式
-     *
-     * @param {boolean} enable
-     */
-    public setHuaweiDebug(enable: boolean) {
-        if (Platform.OS === 'android') {
-            RNTencentPush.setHuaweiDebug(enable);
-        }
-    }
-
-    /**
-     * 配置小米推送
-     *
-     * @param {string} appId
-     * @param {string} appKey
-     */
-    public setXiaomi(appId: string, appKey: string) {
-        if (Platform.OS === 'android') {
-            if (typeof appId !== 'string') {
-                console.error(`[TencentPush setXiaomi] appId is not a string.`);
-            }
-            if (typeof appKey !== 'string') {
-                console.error(`[TencentPush setXiaomi] appKey is not a string.`);
-            }
-            RNTencentPush.setXiaomi(appId, appKey);
-        }
-    }
-
-    /**
-     * 配置魅族推送
-     *
-     * @param {string} appId
-     * @param {string} appKey
-     */
-    public setMeizu(appId: string, appKey: string) {
-        if (Platform.OS === 'android') {
-            if (typeof appId !== 'string') {
-                console.error(`[TencentPush setMeizu] appId is not a string.`);
-            }
-            if (typeof appKey !== 'string') {
-                console.error(`[TencentPush setMeizu] appKey is not a string.`);
-            }
-            RNTencentPush.setMeizu(appId, appKey);
-        }
-    }
 
     /**
      * 推送进程唤起主进程消息处理
@@ -287,6 +312,32 @@ export class TencentCloudPush {
             RNTencentPush.appLaunched()
         }
     }
-
+    /**
+     * 
+     * 调用需要在 @function start() 前
+     * vivo没有需要在这里配置的内容 enable为true就可以启动
+     * 
+     * @param enable
+     * @param hwOption 
+     * @param meizu 
+     * @param oppo 
+     * @param miPush 
+     */
+    private initAndroidPushChannel(params:AndroidPushChannelParam){
+        const { enable , huawei , miPush , oppo , meizu } = params
+        if(huawei){
+            RNTencentPush.setHuaweiDebug(huawei.debugMode);
+        }
+        if(miPush){
+            RNTencentPush.setXiaomi(miPush.appId, miPush.appKey);
+        }
+        if(oppo){
+            RNTencentPush.setOppo(oppo.appKey,oppo.appSecret)
+        }
+        if(meizu){
+            RNTencentPush.setMeizu(meizu.appId,meizu.appKey)
+        }
+        RNTencentPush.enableOtherPush(enable);
+    }
     
 }

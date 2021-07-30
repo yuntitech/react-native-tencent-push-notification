@@ -21,8 +21,11 @@ def safeExtGet(prop, fallback) {
 
 apply plugin: 'com.android.library'
 apply plugin: 'com.huawei.agconnect'      // HMS SDK gradle 插件
+import groovy.json.JsonSlurper
 
 android {
+    def configJson = new JsonSlurper().parse(file("${rootProject.rootDir}/app/src/main/assets/config.json"))
+
     compileSdkVersion safeExtGet('compileSdkVersion', 28)
     buildToolsVersion safeExtGet('buildToolsVersion', '28.0.3')
 
@@ -33,10 +36,27 @@ android {
         versionName "1.0"
 
         consumerProguardFiles 'proguard-rules.pro'
+
+        ndk {
+            abiFilters "armeabi-v7a", "x86"
+        }
+        manifestPlaceholders = [
+                XG_ACCESS_ID : getValNotNull(configJson.androidPushAppId),
+                XG_ACCESS_KEY : getValNotNull(configJson.androidPushAppKey),
+                XG_SERVER_SUFFIX :getXGServerSuffix(configJson.xgServerSuffix)
+        ]
     }
     lintOptions {
         abortOnError false
     }
+}
+
+static String getValNotNull(String val) {
+    return val != null ? val : ""
+}
+
+static String getXGServerSuffix(String server){
+    return server != null ? server : "tpns.tencent.com"
 }
 
 dependencies {

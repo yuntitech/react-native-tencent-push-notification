@@ -77,18 +77,22 @@ class RNTencentPush(private val reactContext: ReactApplicationContext) : ReactCo
         XGPushConfig.setMzPushAppKey(reactContext, appKey)
     }
 
+    @ReactMethod
+    fun setOppo(appKey: String, appSecret: String) {
+        XGPushConfig.setOppoPushAppId(reactContext, appKey)
+        XGPushConfig.setOppoPushAppKey(reactContext, appSecret)
+    }
+
     //启动TPNS推送服务
     @ReactMethod
     fun start(accessId: Int, accessKey: String) {
-
         isStarted = true
-
         XGPushConfig.setAccessId(reactContext, accessId.toLong())
         XGPushConfig.setAccessKey(reactContext, accessKey)
+        registerPush()
     }
 
-    @ReactMethod
-    fun registerPush() {
+    private fun registerPush() {
         XGPushManager.registerPush(reactContext, object : XGIOperateCallback {
             override fun onSuccess(data: Any?, flag: Int) {
                 onRegister(XGPushConfig.getToken(reactContext), XGPushBaseReceiver.SUCCESS)
@@ -340,6 +344,4 @@ class RNTencentPush(private val reactContext: ReactApplicationContext) : ReactCo
 
     override fun onActivityResult(activity: Activity?, requestCode: Int, resultCode: Int, data: Intent?) {
     }
-
-
 }
