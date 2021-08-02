@@ -127,7 +127,7 @@ export declare class TencentCloudPush {
     /**
      * 推送进程唤起主进程消息处理
      */
-    handleNotificationIfNeeded(): Promise<any>;
+    handleNotificationIfNeeded(): Promise<Notification | null>;
     /**
      *  不好获取ReactInstanceManager引用, js那边来赋值, 用于推送进程唤起主进程
      */

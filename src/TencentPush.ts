@@ -294,9 +294,11 @@ export class TencentCloudPush {
     /**
      * 推送进程唤起主进程消息处理
      */
-    public handleNotificationIfNeeded(): Promise<any> {
+    public async handleNotificationIfNeeded(): Promise<Notification | null> {
         if (Platform.OS === 'android') {
-            return RNTencentPush.handleNotificationIfNeeded();
+           const data = await RNTencentPush.handleNotificationIfNeeded()
+           const notification = this.getNotificationFromData(data)
+            return Promise.resolve(notification);
         } else {
             return Promise.reject({
                 message: 'android only',
