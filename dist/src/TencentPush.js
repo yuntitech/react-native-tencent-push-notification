@@ -25,14 +25,14 @@ class TencentCloudPush {
             this.nativeEventsRegistry.addEventListener(TencentPushEventName_1.TencentPushEventName.Message, data => {
                 const notification = this.getNotificationFromData(data);
                 if (notification) {
-                    eventListener.onNotification(notification);
+                    eventListener(notification);
                 }
             });
             // 普通推送
             this.nativeEventsRegistry.addEventListener(TencentPushEventName_1.TencentPushEventName.Notification, data => {
                 const notification = this.getNotificationFromData(data);
                 if (notification) {
-                    eventListener.onNotification(notification);
+                    eventListener(notification);
                 }
             });
         };
@@ -101,9 +101,9 @@ class TencentCloudPush {
      *
      * @param {boolean} enable
      */
-    setDebug(enable) {
-        RNTencentPush.setDebug(enable);
-    }
+    // private setDebug(enable: boolean) {
+    //     RNTencentPush.setDebug(enable);
+    // }
     /**
      * 启动信鸽推送服务，如果是通过点击推送打开的 App，调用 start 后会触发 notification 事件
      *

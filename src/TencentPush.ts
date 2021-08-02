@@ -18,7 +18,7 @@ export type PushParam = {
 }
 
 export type TpnsEventListener = {
-    onNotification:(data: Notification) => void
+    (notification: Notification):void
 }
 
 export type AndroidPushChannelParam ={
@@ -91,7 +91,7 @@ export class TencentCloudPush {
      * 配置 TPNS 集群域名 (Android端该配置在configJson中完成)
      * @param domainName 域名
      */
-    public configureClusterDomainName(domainName: string) {
+    private configureClusterDomainName(domainName: string) {
         if (Platform.OS === 'ios') {
             RNTencentPush.configureClusterDomainName(domainName);
         }
@@ -102,9 +102,9 @@ export class TencentCloudPush {
      *
      * @param {boolean} enable
      */
-    public setDebug(enable: boolean) {
-        RNTencentPush.setDebug(enable);
-    }
+    // private setDebug(enable: boolean) {
+    //     RNTencentPush.setDebug(enable);
+    // }
 
     /**
      * 启动信鸽推送服务，如果是通过点击推送打开的 App，调用 start 后会触发 notification 事件
@@ -112,7 +112,7 @@ export class TencentCloudPush {
      * @param {number} accessId
      * @param {string} accessKey
      */
-    public start(accessId: number, accessKey: string) {
+     private start(accessId: number, accessKey: string) {
         if (typeof accessId !== 'number') {
             console.error(`[TencentPush start] accessId is not a number.`);
         }
@@ -205,7 +205,7 @@ export class TencentCloudPush {
         this.nativeEventsRegistry.addEventListener(TencentPushEventName.Message, data => {
             const notification = this.getNotificationFromData(data)
             if(notification){
-                eventListener.onNotification(notification);
+                eventListener(notification);
             }
         });
     
@@ -213,7 +213,7 @@ export class TencentCloudPush {
         this.nativeEventsRegistry.addEventListener(TencentPushEventName.Notification, data => {
             const notification = this.getNotificationFromData(data)
             if(notification){
-                eventListener.onNotification(notification);
+                eventListener(notification);
             }
         });
      };

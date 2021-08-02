@@ -4,7 +4,7 @@ export declare type PushParam = {
     accessKey: string;
 };
 export declare type TpnsEventListener = {
-    onNotification: (data: Notification) => void;
+    (notification: Notification): void;
 };
 export declare type AndroidPushChannelParam = {
     enable: boolean;
@@ -57,20 +57,19 @@ export declare class TencentCloudPush {
      * 配置 TPNS 集群域名 (Android端该配置在configJson中完成)
      * @param domainName 域名
      */
-    configureClusterDomainName(domainName: string): void;
+    private configureClusterDomainName;
     /**
      * 设置是否开启调试模式，底层 SDK 会打印详细信息
      *
      * @param {boolean} enable
      */
-    setDebug(enable: boolean): void;
     /**
      * 启动信鸽推送服务，如果是通过点击推送打开的 App，调用 start 后会触发 notification 事件
      *
      * @param {number} accessId
      * @param {string} accessKey
      */
-    start(accessId: number, accessKey: string): void;
+    private start;
     /**
      * 停止信鸽推送服务
      */
