@@ -1,11 +1,60 @@
-import { TencentPushEventName } from './TencentPushEventName';
+export declare type PushParam = {
+    debug: boolean;
+    accessId: number;
+    accessKey: string;
+};
+export declare type TpnsEventListener = {
+    onNotification: (data: Notification) => void;
+};
+export declare type AndroidPushChannelParam = {
+    enable: boolean;
+    huawei?: HuaWeiOption;
+    meizu?: MeizuOption;
+    oppo?: OppoOption;
+    miPush?: MiPushOption;
+};
+export declare type MiPushOption = {
+    appId?: string;
+    appKey?: string;
+};
+export declare type HuaWeiOption = {
+    debugMode?: boolean;
+};
+export declare type MeizuOption = {
+    appId: string;
+    appKey: string;
+};
+export declare type OppoOption = {
+    appKey: string;
+    appSecret: string;
+};
+export declare type Notification = {
+    tp: number;
+    msg: string;
+    st: string;
+    pushId?: number;
+    type: number;
+    sellerId?: string;
+    pushPlanId?: number;
+    pushRecordId?: number;
+    msgGroupScene?: string;
+    groupId?: string;
+    clicked: boolean;
+    presented: boolean;
+};
 export declare class TencentCloudPush {
     private nativeEventsRegistry;
     private retryParamsMap;
     private retryLeftMap;
     constructor();
+    initTPNS(params: {
+        pushParam: PushParam;
+        eventListener: TpnsEventListener;
+        iosDomainName?: string;
+        androidPushChannelParam?: AndroidPushChannelParam;
+    }): void;
     /**
-     * 配置 TPNS 集群域名
+     * 配置 TPNS 集群域名 (Android端该配置在configJson中完成)
      * @param domainName 域名
      */
     configureClusterDomainName(domainName: string): void;
@@ -17,16 +66,11 @@ export declare class TencentCloudPush {
     setDebug(enable: boolean): void;
     /**
      * 启动信鸽推送服务，如果是通过点击推送打开的 App，调用 start 后会触发 notification 事件
-     * Android仅设置了配置未调用启动与注册代码
      *
      * @param {number} accessId
      * @param {string} accessKey
      */
     start(accessId: number, accessKey: string): void;
-    /**
-     * 启动并注册
-     */
-    registerPush(): void;
     /**
      * 停止信鸽推送服务
      */
@@ -71,42 +115,16 @@ export declare class TencentCloudPush {
     setBadge(badge: number): void;
     /**
      * 监听 腾讯推送事件回调
-     * @param name 通知名
      * @param listener 回调处理函数
      */
-    addEventListener(name: TencentPushEventName, listener: (data: any) => void): import("react-native").EmitterSubscription;
+    subscribeTPNSEvent: (eventListener: TpnsEventListener) => void;
+    private getNotificationFromData;
     private nativeRetryHandler;
     private resetRetryLeftMap;
     private nativeEventCallback;
     private eventEmitAndReset;
     private retryHandler;
     /*************************** Android 独有的配置 **********************************/
-    /**
-     * 设置是否开启第三方推送通道
-     *
-     * @param {boolean} enable
-     */
-    enableOtherPush(enable: boolean): void;
-    /**
-     * 设置是否开启华为推送的调试模式
-     *
-     * @param {boolean} enable
-     */
-    setHuaweiDebug(enable: boolean): void;
-    /**
-     * 配置小米推送
-     *
-     * @param {string} appId
-     * @param {string} appKey
-     */
-    setXiaomi(appId: string, appKey: string): void;
-    /**
-     * 配置魅族推送
-     *
-     * @param {string} appId
-     * @param {string} appKey
-     */
-    setMeizu(appId: string, appKey: string): void;
     /**
      * 推送进程唤起主进程消息处理
      */
@@ -115,4 +133,16 @@ export declare class TencentCloudPush {
      *  不好获取ReactInstanceManager引用, js那边来赋值, 用于推送进程唤起主进程
      */
     appLaunched(): void;
+    /**
+     *
+     * 调用需要在 @function start() 前
+     * vivo没有需要在这里配置的内容 enable为true就可以启动
+     *
+     * @param enable
+     * @param hwOption
+     * @param meizu
+     * @param oppo
+     * @param miPush
+     */
+    private initAndroidPushChannel;
 }
