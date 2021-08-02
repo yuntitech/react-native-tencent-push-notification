@@ -67,12 +67,12 @@ dependencies {
 
     implementation "com.facebook.react:react-native:${safeExtGet('reactNativeVersion', '+')}"
     implementation 'com.tencent.jg:jg:1.1'
-    implementation 'com.tencent.tpns:tpns:1.2.1.1-release' //  TPNS 推送 [VERSION] 为当前SDK版本号，版本号可在 SDK 下载页查看
-    implementation 'com.tencent.tpns:xiaomi:1.2.1.1-release'//小米推送 [VERSION] 为当前 SDK 版本号，版本号可在 SDK 下载页查看
+    implementation 'com.tencent.tpns:tpns:1.2.6.0-release' //  TPNS 推送 [VERSION] 为当前SDK版本号，版本号可在 SDK 下载页查看
+    implementation 'com.tencent.tpns:xiaomi:1.2.6.0-release'//小米推送 [VERSION] 为当前 SDK 版本号，版本号可在 SDK 下载页查看
 
     implementation 'com.tencent.tpns:huawei:v3-1.0.0.0-release'      // 适用于 HMS Core 版本的 TPNS 插件
     implementation 'com.huawei.hms:push:5.0.2.300' 
-    implementation 'com.tencent.tpns:meizu:1.2.1.1-release'//meizu 推送 [VERSION] 为当前 SDK 版本号，版本号可在 SDK 下载页查看
+    implementation 'com.tencent.tpns:meizu:1.2.6.0-release'//meizu 推送 [VERSION] 为当前 SDK 版本号，版本号可在 SDK 下载页查看
 
 }
 
