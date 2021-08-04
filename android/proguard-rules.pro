@@ -25,3 +25,14 @@
 # 魅族通道
 -dontwarn com.meizu.cloud.pushsdk.**
 -keep class com.meizu.cloud.pushsdk.**{*;}
+
+# vivo通道
+-dontwarn com.vivo.push.**
+-keep class com.vivo.push.**{*; }
+-keep class com.vivo.vms.**{*; }
+-keep class com.tencent.android.vivopush.VivoPushMessageReceiver{*;}
+
+# oppo通道
+-keep public class * extends android.app.Service
+-keep class com.heytap.mcssdk.** {*;}
+-keep class com.heytap.msp.push.** { *;}
