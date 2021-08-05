@@ -48,6 +48,10 @@ class MessageReceiver : XGPushBaseReceiver() {
 
     }
 
+    override fun onQueryTagsResult(p0: Context?, p1: Int, p2: String?, p3: String?) {
+    
+    }
+
     override fun onDeleteTagResult(context: Context?, code: Int, tagName: String) {
 
         if (context == null) {
