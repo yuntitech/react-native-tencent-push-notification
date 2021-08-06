@@ -10,6 +10,7 @@ buildscript {
 
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+        //如果主工程中也有引用请保证版本一致
         classpath 'com.huawei.agconnect:agcp:1.4.1.300'     // 华为推送 gradle 插件依赖
 
     }
@@ -20,6 +21,7 @@ def safeExtGet(prop, fallback) {
 }
 
 apply plugin: 'com.android.library'
+//需要在主工程中应用级gradle文件中配置相同代码
 apply plugin: 'com.huawei.agconnect'      // HMS SDK gradle 插件
 import groovy.json.JsonSlurper
 
