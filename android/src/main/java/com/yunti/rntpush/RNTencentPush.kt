@@ -85,7 +85,7 @@ class RNTencentPush(private val reactContext: ReactApplicationContext) : ReactCo
 
     //启动TPNS推送服务
     @ReactMethod
-    fun start(accessId: Int, accessKey: String) {
+    fun start(accessId: String, accessKey: String) {
         isStarted = true
         XGPushConfig.setAccessId(reactContext, accessId.toLong())
         XGPushConfig.setAccessKey(reactContext, accessKey)

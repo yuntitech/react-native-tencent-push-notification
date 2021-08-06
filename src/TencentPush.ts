@@ -13,7 +13,7 @@ const { RNTencentPush } = NativeModules;
 
 export type PushParam = {
     debug:boolean,
-    accessId: number,
+    accessId: string,
     accessKey: string
 }
 
