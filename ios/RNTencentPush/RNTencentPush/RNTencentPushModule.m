@@ -278,8 +278,8 @@ RCT_EXPORT_METHOD(configureClusterDomainName:(NSString *)domainName) {
 }
 
 #pragma mark - 启动TPNS推送服务
-RCT_EXPORT_METHOD(start:(NSInteger)accessID appKey:(NSString *)appKey) {
-    [[XGPush defaultManager] startXGWithAccessID:(int)accessID accessKey:appKey delegate:self];
+RCT_EXPORT_METHOD(start:(NSString *)accessID appKey:(NSString *)appKey) {
+    [[XGPush defaultManager] startXGWithAccessID:(int)[accessID intValue] accessKey:appKey delegate:self];
     [XGPushTokenManager defaultTokenManager].delegate = self;
     /// 角标数目清零,通知中心清空
     if ([XGPush defaultManager].xgApplicationBadgeNumber > 0) {

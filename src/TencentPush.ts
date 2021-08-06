@@ -109,16 +109,10 @@ export class TencentCloudPush {
     /**
      * 启动信鸽推送服务，如果是通过点击推送打开的 App，调用 start 后会触发 notification 事件
      *
-     * @param {number} accessId
+     * @param {string} accessId
      * @param {string} accessKey
      */
-     private start(accessId: number, accessKey: string) {
-        if (typeof accessId !== 'number') {
-            console.error(`[TencentPush start] accessId is not a number.`);
-        }
-        if (typeof accessKey !== 'string') {
-            console.error(`[TencentPush start] accessKey is not a string.`);
-        }
+     private start(accessId: string, accessKey: string) {
         this.retryParamsMap.set(TencentPushEventName.RegisterFail, {accessId, accessKey})
         RNTencentPush.start(accessId, accessKey);
     }
