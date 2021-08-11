@@ -4,7 +4,7 @@ export declare type PushParam = {
     accessKey: string;
 };
 export declare type TpnsEventListener = {
-    (notification: Notification): void;
+    (pushNotification: PushNotification): void;
 };
 export declare type AndroidPushChannelParam = {
     enable: boolean;
@@ -28,7 +28,7 @@ export declare type OppoOption = {
     appKey: string;
     appSecret: string;
 };
-export declare type Notification = {
+export declare type PushNotification = {
     tp: number;
     msg: string;
     st: string;
@@ -127,7 +127,7 @@ export declare class TencentCloudPush {
     /**
      * 推送进程唤起主进程消息处理
      */
-    handleNotificationIfNeeded(): Promise<Notification | null>;
+    handleNotificationIfNeeded(): Promise<PushNotification | null>;
     /**
      *  不好获取ReactInstanceManager引用, js那边来赋值, 用于推送进程唤起主进程
      */

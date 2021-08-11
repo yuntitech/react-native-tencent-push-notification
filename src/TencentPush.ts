@@ -18,7 +18,7 @@ export type PushParam = {
 }
 
 export type TpnsEventListener = {
-    (notification: Notification):void
+    (pushNotification: PushNotification):void
 }
 
 export type AndroidPushChannelParam ={
@@ -48,7 +48,7 @@ export type OppoOption = {
     appSecret:string
 }
 
-export type Notification = {
+export type PushNotification = {
     tp: number; // 消息类型
     msg: string; // 消息内容
     st: string; // 消息发送时间
@@ -212,8 +212,8 @@ export class TencentCloudPush {
         });
      };
 
-     private getNotificationFromData = (data:any): Notification | null => {
-        let notification: Notification;
+     private getNotificationFromData = (data:any): PushNotification | null => {
+        let notification: PushNotification;
         try {
           if (Platform.OS === 'android') {
             notification = data;
@@ -288,7 +288,7 @@ export class TencentCloudPush {
     /**
      * 推送进程唤起主进程消息处理
      */
-    public async handleNotificationIfNeeded(): Promise<Notification | null> {
+    public async handleNotificationIfNeeded(): Promise<PushNotification | null> {
         if (Platform.OS === 'android') {
            const data = await RNTencentPush.handleNotificationIfNeeded()
            const notification = this.getNotificationFromData(data)
