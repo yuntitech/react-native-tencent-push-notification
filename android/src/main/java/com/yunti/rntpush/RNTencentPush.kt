@@ -95,7 +95,7 @@ class RNTencentPush(private val reactContext: ReactApplicationContext) : ReactCo
     private fun registerPush() {
         XGPushManager.registerPush(reactContext, object : XGIOperateCallback {
             override fun onSuccess(data: Any?, flag: Int) {
-                onRegister(XGPushConfig.getToken(reactContext), XGPushBaseReceiver.SUCCESS)
+                onRegister(XGPushConfig.getOtherPushToken(reactContext), XGPushBaseReceiver.SUCCESS)
             }
 
             override fun onFail(data: Any?, errCode: Int, msg: String) {
