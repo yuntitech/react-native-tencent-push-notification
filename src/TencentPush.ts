@@ -196,7 +196,7 @@ export class TencentCloudPush {
     public subscribeTPNSEvent = (eventListener:TpnsEventListener) => {
 
         // iOS: 静默推送会来到这个方法
-        this.nativeEventsRegistry.addEventListener(TencentPushEventName.Message, data => {
+        this.nativeEventsRegistry.addEventListener(TencentPushEventName.Message, data => {            
             const notification = this.getNotificationFromData(data)
             if(notification){
                 eventListener(notification);
@@ -218,8 +218,12 @@ export class TencentCloudPush {
           if (Platform.OS === 'android') {
             notification = data;
           } else {
-            const parsedCustomContent = JSON.parse(data.custom_content);
-            notification = parsedCustomContent.bookln_msg;
+            if(data.custom_content){
+                const parsedCustomContent = JSON.parse(data.custom_content);
+                notification = parsedCustomContent.bookln_msg;         
+             }else{
+                notification = data
+             }
           }
         } catch (error) {
           console.log('==============wws❌❌❌: ParseNotificationError ', error);

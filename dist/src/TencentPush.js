@@ -52,8 +52,13 @@ class TencentCloudPush {
                     notification = data;
                 }
                 else {
-                    const parsedCustomContent = JSON.parse(data.custom_content);
-                    notification = parsedCustomContent.bookln_msg;
+                    if (data.custom_content) {
+                        const parsedCustomContent = JSON.parse(data.custom_content);
+                        notification = parsedCustomContent.bookln_msg;
+                    }
+                    else {
+                        notification = data;
+                    }
                 }
             }
             catch (error) {
