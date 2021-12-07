@@ -41,6 +41,7 @@ export declare type PushNotification = {
     groupId?: string;
     clicked: boolean;
     presented: boolean;
+    isIM: boolean;
 };
 export declare class TencentCloudPush {
     private nativeEventsRegistry;

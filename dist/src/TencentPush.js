@@ -67,6 +67,7 @@ class TencentCloudPush {
             }
             notification.clicked = data.clicked;
             notification.presented = data.presented;
+            notification.isIM = data.isIM;
             return notification;
         };
         this.nativeEventCallback = (eventType, data) => {

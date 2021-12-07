@@ -289,11 +289,12 @@ class RNTencentPush(private val reactContext: ReactApplicationContext) : ReactCo
 
     override fun onHostResume() {
         XGPushManager.onActivityStarted(currentActivity)
-        currentActivity?.intent?.createClickedNotifiction()?.let{
-
-        }
         currentActivity?.intent?.createClickedNotifiction()?.let {
             if (isAppLaunched) {
+               val dataInfo =  currentActivity?.intent?.data.toString()
+                if (dataInfo.isNotEmpty()){
+                    it.putBoolean("isIM",true);
+                }
                 sendEvent("notification", it)
             } else {
                 launchInfo = it

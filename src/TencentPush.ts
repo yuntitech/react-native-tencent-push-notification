@@ -61,6 +61,7 @@ export type PushNotification = {
     groupId?: string; // （新增）站内信组Id
     clicked: boolean; // 用户是否已经点击
     presented: boolean; // 安卓上显示送达
+    isIM:boolean; //是否是IM离线推送
   }
 
 export class TencentCloudPush {
@@ -232,6 +233,7 @@ export class TencentCloudPush {
     
         notification.clicked = data.clicked;
         notification.presented = data.presented;
+        notification.isIM = data.isIM;
         return notification;
       };
 
