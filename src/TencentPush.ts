@@ -62,6 +62,7 @@ export type PushNotification = {
     clicked: boolean; // 用户是否已经点击
     presented: boolean; // 安卓上显示送达
     isIM:boolean; //是否是IM离线推送
+    isSilentPush:boolean; //是否是静默推送
   }
 
 export class TencentCloudPush {
@@ -198,7 +199,7 @@ export class TencentCloudPush {
 
         // iOS: 静默推送会来到这个方法
         this.nativeEventsRegistry.addEventListener(TencentPushEventName.Message, data => {            
-            const notification = this.getNotificationFromData(data)
+            const notification = this.getNotificationFromData({...data,isSilentPush:true})
             if(notification){
                 eventListener(notification);
             }
@@ -206,7 +207,7 @@ export class TencentCloudPush {
     
         // 普通推送
         this.nativeEventsRegistry.addEventListener(TencentPushEventName.Notification, data => {
-            const notification = this.getNotificationFromData(data)
+            const notification = this.getNotificationFromData({...data,isSilentPush:false})
             if(notification){
                 eventListener(notification);
             }

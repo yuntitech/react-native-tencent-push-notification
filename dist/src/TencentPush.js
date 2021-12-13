@@ -32,14 +32,14 @@ class TencentCloudPush {
         this.subscribeTPNSEvent = (eventListener) => {
             // iOS: 静默推送会来到这个方法
             this.nativeEventsRegistry.addEventListener(TencentPushEventName_1.TencentPushEventName.Message, data => {
-                const notification = this.getNotificationFromData(data);
+                const notification = this.getNotificationFromData(Object.assign(Object.assign({}, data), { isSilentPush: true }));
                 if (notification) {
                     eventListener(notification);
                 }
             });
             // 普通推送
             this.nativeEventsRegistry.addEventListener(TencentPushEventName_1.TencentPushEventName.Notification, data => {
-                const notification = this.getNotificationFromData(data);
+                const notification = this.getNotificationFromData(Object.assign(Object.assign({}, data), { isSilentPush: false }));
                 if (notification) {
                     eventListener(notification);
                 }
