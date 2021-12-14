@@ -63,6 +63,7 @@ export type PushNotification = {
     presented: boolean; // 安卓上显示送达
     isIM:boolean; //是否是IM离线推送
     isSilentPush:boolean; //是否是静默推送
+    ext?:string; //格外的字段
   }
 
 export class TencentCloudPush {

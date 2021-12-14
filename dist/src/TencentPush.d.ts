@@ -43,6 +43,7 @@ export declare type PushNotification = {
     presented: boolean;
     isIM: boolean;
     isSilentPush: boolean;
+    ext?: string;
 };
 export declare class TencentCloudPush {
     private nativeEventsRegistry;

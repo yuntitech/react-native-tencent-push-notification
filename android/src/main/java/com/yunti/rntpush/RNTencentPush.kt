@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.text.TextUtils
 import androidx.collection.ArraySet
 import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.DeviceEventManagerModule
@@ -25,7 +26,8 @@ import org.json.JSONObject
  *   Create by cyberlouis on 2020/10/20
  */
 
-class RNTencentPush(private val reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext),
+class RNTencentPush(private val reactContext: ReactApplicationContext) :
+    ReactContextBaseJavaModule(reactContext),
     ActivityEventListener, LifecycleEventListener {
 
     companion object {
@@ -199,8 +201,8 @@ class RNTencentPush(private val reactContext: ReactApplicationContext) : ReactCo
 
     private fun sendEvent(eventName: String, params: WritableMap) {
         reactContext
-                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
-                .emit(eventName, params)
+            .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+            .emit(eventName, params)
     }
 
     private fun onStart(code: Int) {
@@ -291,9 +293,10 @@ class RNTencentPush(private val reactContext: ReactApplicationContext) : ReactCo
         XGPushManager.onActivityStarted(currentActivity)
         currentActivity?.intent?.createClickedNotifiction()?.let {
             if (isAppLaunched) {
-               val dataInfo =  currentActivity?.intent?.data.toString()
-                if (dataInfo.isNotEmpty()){
-                    it.putBoolean("isIM",true);
+                val extras = currentActivity?.intent?.extras;
+                val ext = extras?.getString("ext")
+                if (!TextUtils.isEmpty(ext)) {
+                    it.putString("ext", ext)
                 }
                 sendEvent("notification", it)
             } else {
@@ -309,8 +312,6 @@ class RNTencentPush(private val reactContext: ReactApplicationContext) : ReactCo
     override fun onHostDestroy() {
 
     }
-
-
 
 
     private fun registerReceivers() {
@@ -343,6 +344,11 @@ class RNTencentPush(private val reactContext: ReactApplicationContext) : ReactCo
         }
     }
 
-    override fun onActivityResult(activity: Activity?, requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun onActivityResult(
+        activity: Activity?,
+        requestCode: Int,
+        resultCode: Int,
+        data: Intent?
+    ) {
     }
 }
