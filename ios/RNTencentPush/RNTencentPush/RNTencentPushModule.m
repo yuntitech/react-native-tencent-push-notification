@@ -59,12 +59,18 @@ static NSMutableDictionary* TencentPush_GetNotification(NSDictionary *userInfo) 
   NSDictionary *alert = userInfo[@"aps"][@"alert"];
   
   NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
-  dict[@"custom_content"] = customContent[@"custom"];
+  if (customContent[@"custom"]) {
+    dict[@"custom_content"] = customContent[@"custom"];
+  }
+  if (customContent[@"ext"]) {
+    dict[@"ext"] = customContent[@"ext"];
+  }
   dict[@"body"] = @{
     @"title": alert[@"title"] ?: @"",
     @"subtitle": alert[@"subtitle"] ?: @"",
     @"content": alert[@"body"] ?: @""
   };
+  
   return dict;
 };
 

@@ -41,3 +41,5 @@ Podfile.lock
 Pods/
 package-lock.json
 yarn.lock
+
+.history
