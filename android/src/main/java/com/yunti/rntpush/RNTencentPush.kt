@@ -299,6 +299,7 @@ class RNTencentPush(private val reactContext: ReactApplicationContext) :
                     it.putString("ext", ext)
                 }
                 sendEvent("notification", it)
+                currentActivity?.intent = null
             } else {
                 launchInfo = it
             }
