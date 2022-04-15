@@ -11,14 +11,14 @@ import org.json.JSONObject
 
 fun Intent.createClickedNotifiction(): WritableMap? {
     val ext = this.getStringExtra("ext")?.fromJson();
-    if (data == null && ext == null){
+    if (data == null && ext == null) {
         return null
     }
 
     val notification = Arguments.createMap()
     notification.putBoolean("clicked", true)
 
-    if (data != null){
+    if (data != null) {
         val uri = data
         for (key in listOf("tp", "pushPlanId", "pushRecordId")) {
             uri?.getQueryParameter(key)?.toDouble()?.let { notification.putDouble(key, it) }
@@ -26,12 +26,11 @@ fun Intent.createClickedNotifiction(): WritableMap? {
         for (key in listOf("msg")) {
             notification.putString(key, uri?.getQueryParameter(key))
         }
-    }else{
-
-        if(null != ext && ext.hasKey("type") && ext.hasKey("userId")){
-            notification.putBoolean("isIM",ext?.getString("type").equals("isIM"))
-            notification.putString("userId",ext?.getString("userId"))
-        }else{
+    } else {
+        if (null != ext && ext.hasKey("type") && ext.hasKey("userId")) {
+            notification.putBoolean("isIM", ext?.getString("type").equals("isIM"))
+            notification.putString("userId", ext?.getString("userId"))
+        } else {
             return null
         }
     }
