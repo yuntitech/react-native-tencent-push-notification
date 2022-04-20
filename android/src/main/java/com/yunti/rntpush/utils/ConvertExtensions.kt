@@ -26,6 +26,10 @@ fun Intent.createClickedNotifiction(): WritableMap? {
         for (key in listOf("msg")) {
             notification.putString(key, uri?.getQueryParameter(key))
         }
+        if (null != ext && ext.hasKey("type") && ext.hasKey("userId")) {
+            notification.putBoolean("isIM", ext?.getString("type").equals("isIM"))
+            notification.putString("userId", ext?.getString("userId"))
+        }
     } else {
         if (null != ext && ext.hasKey("type") && ext.hasKey("userId")) {
             notification.putBoolean("isIM", ext?.getString("type").equals("isIM"))
